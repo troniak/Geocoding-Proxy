@@ -2,6 +2,7 @@ from config import mapsAPI,hereAppCode,hereAppID,error_message
 
 import socket
 import httplib
+import re
 
 HOST, PORT = '', 8888
 
@@ -31,7 +32,13 @@ while True:
     if not success:
         client_response = error_message;
     else:
-      client_response = http_response.read(1024);
+      http_response_text = http_response.read();
+      latmatch = re.search('(?<="lat" : )-?[0-9]+\.?[0-9]*',http_response_text)
+      latstr = latmatch.group(0);
+      lngmatch = re.search('(?<="lng" : )-?[0-9]+\.?[0-9]*',http_response_text)
+      lngstr = lngmatch.group(0);
+
+      client_response = "("+latstr+","+lngstr+")";
 
     client_connection.sendall(client_response)
     client_connection.close()

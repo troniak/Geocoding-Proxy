@@ -14,21 +14,24 @@ while True:
     client_connection, client_address = listen_socket.accept()
     request = client_connection.recv(1024)
 
-    conn = httplib.HTTPSConnection('maps.googleapis.com')
-    conn.request('GET','/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key='+mapsAPI)
-    http_response = conn.getresponse().read()
+    print request
 
-    success = 0;
+    conn = httplib.HTTPSConnection('maps.googleapis.com',timeout=10)
+    conn.request('GET','/maps/api/geocode/json?address='+request+'&key='+mapsAPI)
+    http_response = conn.getresponse();
+    success = http_response.status == 200
 
     if not success:
         conn = httplib.HTTPSConnection('geocoder.cit.api.here.com')
-        conn.request('GET','/6.2/geocode.json?app_id='+hereAppID+'&app_code='+hereAppCode+'&searchtext=425+W+Randolph+Chicago')
-        http_response = conn.getresponse().read();
+        conn.request('GET','/6.2/geocode.json?app_id='+hereAppID+'&app_code='+hereAppCode+'&searchtext='+request)
+        http_response = conn.getresponse();
 
-    success = 1;
+    success = http_response.status == 200
 
     if not success:
-        http_response = error_message;
+        client_response = error_message;
+    else:
+      client_response = http_response.read(1024);
 
-    client_connection.sendall(http_response)
+    client_connection.sendall(client_response)
     client_connection.close()

@@ -1,1 +1,1 @@
-# Geocoding-Proxy
+# Geocoding-Proxy## How To Run The Service```bashpython src/geoserver.py```## How To Use The Services APIExample: return longitude and latitude for location Pittsburgh, Pennsylvania:```bashtelnet <hostname> 8888Pittsburgh+PA```
